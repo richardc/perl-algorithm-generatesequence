@@ -1,7 +1,7 @@
 use strict;
 package Algorithm::GenerateSequence;
 use vars qw( $VERSION );
-$VERSION = '0.01';
+$VERSION = '0.02';
 
 =head1 NAME
 
@@ -12,10 +12,10 @@ Algorithm::GenerateSequence - a sequence generator
  my $gen = Algorithm::GenerateSequence->new(
     [qw( one two three )], [qw( hey bee )],
  );
- print $gen->next, "\n"; # onehey
- print $gen->next, "\n"; # onebee
- print $gen->next, "\n"; # twohey
- print $gen->next, "\n"; # twobee
+ print join(' ', $gen->next), "\n"; # one hey
+ print join(' ', $gen->next), "\n"; # one bee
+ print join(' ', $gen->next), "\n"; # two hey
+ print join(' ', $gen->next), "\n"; # two bee
  ...
 
 =head1 DESCRIPTION
@@ -23,7 +23,7 @@ Algorithm::GenerateSequence - a sequence generator
 Algorithm::GenerateSequence provides an iterator interface to a
 sequence you define in terms of the symbols to use in each position.
 
-You may use a differeng amount of symbols in each position and the
+You may use a different amount of symbols in each position and the
 module will iterate over them correctly.  This might be useful in
 identifying all the cards in a deck:
 
