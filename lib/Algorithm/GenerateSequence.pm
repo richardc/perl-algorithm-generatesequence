@@ -52,7 +52,7 @@ sub new {
     my $class = shift;
     $class->SUPER::new({
         _values   => [ @_ ],
-        _counters => [ map { 0 } @_ ],
+        _counters => [ (0) x @_ ],
     });
 }
 
