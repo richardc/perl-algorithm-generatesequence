@@ -6,3 +6,4 @@ META.yml
 README
 lib/Algorithm/GenerateSequence.pm
 t/ags.t
+bench_call

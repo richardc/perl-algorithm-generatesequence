@@ -1,6 +1,7 @@
 use strict;
 package Algorithm::GenerateSequence;
-our $VERSION = '1.21';
+use vars qw( $VERSION );
+$VERSION = '0.01';
 
 =head1 NAME
 
