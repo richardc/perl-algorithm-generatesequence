@@ -1,8 +1,6 @@
 use strict;
 package Algorithm::GenerateSequence;
 our $VERSION = '1.21';
-use base 'Class::Accessor::Fast';
-__PACKAGE__->mk_accessors(qw( _values _counters _started _ended ));
 
 =head1 NAME
 
@@ -50,10 +48,34 @@ sequence
 
 sub new {
     my $class = shift;
-    $class->SUPER::new({
-        _values   => [ @_ ],
-        _counters => [ (0) x @_ ],
-    });
+
+    my @values = @_;
+    my @counters = (0) x @values;
+    my ($started, $ended);
+
+    bless sub {
+        return if $ended;
+
+        if ($started++) {
+            my $max = $#counters;
+
+            # mmm, long addition
+            do {
+                my $new = ++$counters[ $max ];
+                # check for overflow
+                goto DONE if $new % @{ $values[ $max ] };
+                $counters[ $max ] = 0;
+            } while --$max >= 0;
+          DONE:
+            if ($max < 0) {
+                $ended = 1;
+                return;
+            }
+        }
+
+        my $i = 0;
+        return map { $values[ $i++ ][ $_ ] } @counters;
+    }, ref $class || $class;
 }
 
 =head1 next
@@ -63,64 +85,22 @@ at the end of the sequence
 
 =cut
 
-sub next {
-    my $self = shift;
+sub next { $_[0]->() }
 
-    return if $self->_ended;
-
-    if ($self->_started) {
-        my $max = @{ $self->_counters } - 1;
-
-        # mmm, long addition
-        do {
-            my $new = ++$self->_counters->[ $max ];
-            # check for overflow
-            goto DONE if $new % @{ $self->_values->[ $max ] };
-            $self->_counters->[ $max ] = 0;
-        } while --$max >= 0;
-      DONE:
-        if ($max < 0) {
-            $self->_ended(1);
-            return;
-        }
-    }
-    $self->_started(1);
-
-    my $i = 0;
-    return map {
-        $self->_values->[ $i++ ][ $_ ]
-    } @{ $self->_counters };
-}
-
-=head2 reset
-
-reset the iterator
-
-=cut
-
-sub reset {
-    my $self = shift;
-    $_ = 0 for @{ $self->_counters };
-    $self->_started(0);
-    $self->_ended(0);
-}
 
 =head2 as_list
 
-return the entire sequence as a list of array references
+return the remainder of the sequence as a list of array references
 
 =cut
 
 sub as_list {
     my $self = shift;
-    $self->reset;
-    my @results;
 
-    while (my @next = $self->next) {
+    my @results;
+    while (my @next = $self->()) {
         push @results, \@next;
     }
-
-    $self->reset;
     return @results;
 }
 

@@ -1,6 +1,6 @@
 #!perl -w
 use strict;
-use Test::More tests => 17;
+use Test::More tests => 19;
 
 my $class = 'Algorithm::GenerateSequence';
 require_ok( $class );
@@ -23,5 +23,13 @@ is_deeply( [ $iter->next ], [qw( beta  two three )] );
 ok( !$iter->next, "end" );
 ok( !$iter->next, "still the end" );
 
-$iter->reset;
-is_deeply( [ $iter->next ], [qw( alpha one one )], "reset the iterator" );
+$iter = $class->new(
+    [qw( alpha beta )], [qw( one two )] );
+
+isa_ok( $iter, $class );
+is_deeply( [ $iter->() ], [qw( alpha one )], "new iter" );
+is_deeply( [ $iter->as_list ], [
+    [qw( alpha two )],
+    [qw( beta  one )],
+    [qw( beta  two )],
+   ], "as_list" );
