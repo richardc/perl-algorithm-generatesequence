@@ -11,9 +11,22 @@ Algorithm::GenerateSequence - a sequence generator
 
 =head1 SYNOPSIS
 
+ my $gen = Algorithm::GenerateSequence->new(
+    [qw( one two three )], [qw( hey bee )],
+ );
+ print $gen->next, "\n"; # onehey
+ print $gen->next, "\n"; # onebee
+ print $gen->next, "\n"; # twohey
+ print $gen->next, "\n"; # twobee
+ ...
+
+=head1 DESCRIPTION
+
 =head1 METHODS
 
-=head2 new
+=head2 new( @values );
+
+values contains arrays of values which will be treated in sequence
 
 =cut
 
@@ -25,12 +38,12 @@ sub new {
     });
 }
 
-sub reset {
-    my $self = shift;
-    $_ = 0 for @{ $self->_counters };
-    $self->_started(0);
-    $self->_ended(0);
-}
+=head1 next
+
+returns a list containing the next value in the sequence, false after
+the end of the list.
+
+=cut
 
 sub next {
     my $self = shift;
@@ -60,6 +73,25 @@ sub next {
         $self->_values->[ $i++ ][ $_ ]
     } @{ $self->_counters };
 }
+
+=head2 reset
+
+reset the iterator
+
+=cut
+
+sub reset {
+    my $self = shift;
+    $_ = 0 for @{ $self->_counters };
+    $self->_started(0);
+    $self->_ended(0);
+}
+
+=head2 as_list
+
+return the entire set as a list of arrays
+
+=cut
 
 sub as_list {
     my $self = shift;
